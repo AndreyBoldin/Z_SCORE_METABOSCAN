@@ -252,27 +252,13 @@ def main():
                                         
                                         with col2:
                                             st.markdown("**Cтарый метод:**")
-                                            with st.expander("Как выглядит в отчете:"):
-                                                display_group_cards(patient_risk_params_exp_old, patient_risk_scores_old)
-                                            st.dataframe(
-                                                patient_risk_scores_old,
-                                                use_container_width=True
-                                            )
-                                            st.dataframe(patient_risk_params_exp_old[['Категория', 'Subgroup_score']])
+                                            display_group_cards(patient_risk_params_exp_old, patient_risk_scores_old)
                                         
                                         with col3:
                                             # Display individual risk scores
                                             st.markdown("**Z-scores:**")
-                                            with st.expander("Как выглядит в отчете:"):
-                                                display_group_cards(patient_risk_params_exp, patient_risk_scores)
-                                            st.dataframe( 
-                                                patient_risk_scores,
-                                                use_container_width=True
-                                            )
-                                            st.dataframe(
-                                                patient_risk_params_exp,
-                                                use_container_width=True
-                                            )
+                                            display_group_cards(patient_risk_params_exp, patient_risk_scores)
+                                        
                                         
 
                         else:  # Single patient case (original behavior)
@@ -297,17 +283,11 @@ def main():
                             cols = st.columns(2)
                             with cols[0]:
                                 st.header("Старые риски:")
-                                with st.expander("Как выглядит в отчете:"):
-                                    display_group_cards(risk_params_exp_old, risk_scores_old)
-                                st.dataframe(risk_scores_old)
-                                st.dataframe(risk_params_exp_old[['Категория', 'Subgroup_score']])
+                                display_group_cards(risk_params_exp_old, risk_scores_old)
                                 
                             with cols[1]:
                                 st.header("Z-score:")
-                                with st.expander("Как выглядит в отчете:"):
-                                    display_group_cards(risk_params_exp_zscore, risk_scores)
-                                st.dataframe(risk_scores)
-                                st.dataframe(risk_params_exp_zscore[['Категория','Z_score', 'Subgroup_score']])
+                                display_group_cards(risk_params_exp_zscore, risk_scores)
                                 
                     except Exception as e:
                         st.error(f"An error occurred: {str(e)}")
