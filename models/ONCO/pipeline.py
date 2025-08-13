@@ -79,7 +79,8 @@ class ONCOPipeline(BaseDiseasePipeline):
             # Second stage - liver model
             liver_model = self.models['liver']
             X_liver = self.preprocess_data(row, liver_model.feature_names_in_)
-            liver_proba = 1 - liver_model.predict_proba(X_liver)[0][0]
+            #liver_proba = 1 - liver_model.predict_proba(X_liver)[0][0]
+            liver_proba = liver_model.predict_proba(X_liver)[0][0]
             
             return {
                 "Группа риска": "Оценка пролиферативных процессов",
