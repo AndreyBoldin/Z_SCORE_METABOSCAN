@@ -211,6 +211,8 @@ def main():
                         metabolomic_data_with_ratios_path = os.path.join(temp_dir, "metabolomic_data.xlsx")
                         metabolomic_data_with_ratios.to_excel(metabolomic_data_with_ratios_path, index=False)
                         
+                        metabolite_data = safe_parse_metabolite_data(metabolomic_data_with_ratios_path)
+                        
                         # Check if input file contains multiple patients (more than 1 row after header)
                         df_metabolomic = pd.read_excel(metabolomic_data)
                         multiple_patients = len(df_metabolomic) > 1
@@ -243,21 +245,231 @@ def main():
                                         patient_risk_scores = calculate_risks(patient_risk_params_exp, patient_data)
                                         patient_risk_scores_old = calculate_risks(patient_risk_params_exp_old, patient_data)
                                         # Display results
-                                        col1, col2, col3 = st.columns([1, 2, 2])
                                         
-                                        with col1:
-                                            st.markdown(f"**Код пациента:** {patient_ids[idx]}")
-                                            st.markdown(f"**Группа:** {patient_groups[idx]}")
-                                            st.markdown("---")
                                         
+                                        st.markdown(f"**Код пациента:** {patient_ids[idx]}")
+                                        st.markdown(f"**Группа:** {patient_groups[idx]}")
+                                        st.markdown("---")
+                                        col2, col3, col4 = st.columns([1 , 1, 1])
+                                            
                                         with col2:
-                                            st.markdown("**Cтарый метод:**")
-                                            display_group_cards(patient_risk_params_exp_old, patient_risk_scores_old)
-                                        
+                                            with st.expander("Коридоры", expanded=True ):
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Метаболизм фенилаланина",
+                                                        metabolite_concentrations= {
+                                                                "Phenylalanine": metabolite_data["Phenylalanine"],
+                                                                "Tyrosin": metabolite_data["Tyrosin"],
+                                                                "Summ Leu-Ile": metabolite_data["Summ Leu-Ile"],
+                                                                "Valine": metabolite_data["Valine"],
+                                                                "BCAA": metabolite_data["BCAA"],
+                                                                "BCAA/AAA": metabolite_data["BCAA/AAA"],
+                                                                "Phe/Tyr": metabolite_data["Phe/Tyr"],
+                                                                "Val/C4": metabolite_data["Val/C4"],
+                                                                "(Leu+IsL)/(C3+С5+С5-1+C5-DC)": metabolite_data[
+                                                                    "(Leu+IsL)/(C3+С5+С5-1+C5-DC)"
+                                                                ],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Метаболизм гистидина",
+                                                        metabolite_concentrations= {
+                                                                "Histidine": metabolite_data["Histidine"],
+                                                                "Methylhistidine": metabolite_data["Methylhistidine"],
+                                                                "Threonine": metabolite_data["Threonine"],
+                                                                "Glycine": metabolite_data["Glycine"],
+                                                                "DMG": metabolite_data["DMG"],
+                                                                "Serine": metabolite_data["Serine"],
+                                                                "Lysine": metabolite_data["Lysine"],
+                                                                "Glutamic acid": metabolite_data["Glutamic acid"],
+                                                                "Glutamine/Glutamate": metabolite_data["Glutamine"],
+                                                                "Glutamine/Glutamate": metabolite_data["Glutamine/Glutamate"],
+                                                                "Glycine/Serine": metabolite_data["Glycine/Serine"],
+                                                                "GSG Index": metabolite_data["GSG Index"],
+                                                                "Carnosine": metabolite_data["Carnosine"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Метаболизм метионина",
+                                                        metabolite_concentrations= {
+                                                                "Methionine": metabolite_data["Methionine"],
+                                                                "Methionine-Sulfoxide": metabolite_data["Methionine-Sulfoxide"],
+                                                                "Taurine": metabolite_data["Taurine"],
+                                                                "Betaine": metabolite_data["Betaine"],
+                                                                "Choline": metabolite_data["Choline"],
+                                                                "TMAO": metabolite_data["TMAO"],
+                                                                "Betaine/choline": metabolite_data["Betaine/choline"],
+                                                                "Methionine + Taurine": metabolite_data["Methionine + Taurine"],
+                                                                "Met Oxidation": metabolite_data["Met Oxidation"],
+                                                                "TMAO Synthesis": metabolite_data["TMAO Synthesis"],
+                                                                "DMG / Choline": metabolite_data["DMG / Choline"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Кинурениновый путь",
+                                                        metabolite_concentrations= {
+                                                                "Tryptophan": metabolite_data["Tryptophan"],
+                                                                "Kynurenine": metabolite_data["Kynurenine"],
+                                                                "Antranillic acid": metabolite_data["Antranillic acid"],
+                                                                "Quinolinic acid": metabolite_data["Quinolinic acid"],
+                                                                "Xanthurenic acid": metabolite_data["Xanthurenic acid"],
+                                                                "Kynurenic acid": metabolite_data["Kynurenic acid"],
+                                                                "Kyn/Trp": metabolite_data["Kyn/Trp"],
+                                                                "Trp/(Kyn+QA)": metabolite_data["Trp/(Kyn+QA)"],
+                                                                "Kyn/Quin": metabolite_data["Kyn/Quin"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Серотониновый путь",
+                                                        metabolite_concentrations= {
+                                                                "Serotonin": metabolite_data["Serotonin"],
+                                                                "HIAA": metabolite_data["HIAA"],
+                                                                "5-hydroxytryptophan": metabolite_data["5-hydroxytryptophan"],
+                                                                "Serotonin / Trp": metabolite_data["Serotonin / Trp"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Индоловый путь",
+                                                        metabolite_concentrations= {
+                                                                "Indole-3-acetic acid": metabolite_data["Indole-3-acetic acid"],
+                                                                "Indole-3-lactic acid": metabolite_data["Indole-3-lactic acid"],
+                                                                "Indole-3-carboxaldehyde": metabolite_data[
+                                                                    "Indole-3-carboxaldehyde"
+                                                                ],
+                                                                "Indole-3-propionic acid": metabolite_data[
+                                                                    "Indole-3-propionic acid"
+                                                                ],
+                                                                "Indole-3-butyric": metabolite_data["Indole-3-butyric"],
+                                                                "Tryptamine": metabolite_data["Tryptamine"],
+                                                                "Tryptamine / IAA": metabolite_data["Tryptamine / IAA"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Метаболизм аргинина",
+                                                        metabolite_concentrations= {
+                                                                "Proline": metabolite_data["Proline"],
+                                                                "Hydroxyproline": metabolite_data["Hydroxyproline"],
+                                                                "ADMA": metabolite_data["ADMA"],
+                                                                "NMMA": metabolite_data["NMMA"],
+                                                                "TotalDMA (SDMA)": metabolite_data["TotalDMA (SDMA)"],
+                                                                "Homoarginine": metabolite_data["Homoarginine"],
+                                                                "Arginine": metabolite_data["Arginine"],
+                                                                "Citrulline": metabolite_data["Citrulline"],
+                                                                "Ornitine": metabolite_data["Ornitine"],
+                                                                "Asparagine": metabolite_data["Asparagine"],
+                                                                "Aspartic acid": metabolite_data["Aspartic acid"],
+                                                                "Creatinine": metabolite_data["Creatinine"],
+                                                                "Arg/ADMA": metabolite_data["Arg/ADMA"],
+                                                                "(Arg+HomoArg)/ADMA": metabolite_data["(Arg+HomoArg)/ADMA"],
+                                                                "Arg/Orn+Cit": metabolite_data["Arg/Orn+Cit"],
+                                                                "ADMA/(Adenosin+Arginine)": metabolite_data[
+                                                                    "ADMA/(Adenosin+Arginine)"
+                                                                ],
+                                                                "Symmetrical Arg Methylation": metabolite_data[
+                                                                    "Symmetrical Arg Methylation"
+                                                                ],
+                                                                "Sum of Dimethylated Arg": metabolite_data[
+                                                                    "Sum of Dimethylated Arg"
+                                                                ],
+                                                                "Ratio of Pro to Cit": metabolite_data["Ratio of Pro to Cit"],
+                                                                "Cit Synthesis": metabolite_data["Cit Synthesis"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Метаболизм ацилкарнитинов (соотношения)",
+                                                        metabolite_concentrations= {
+                                                                "Alanine": metabolite_data["Alanine"],
+                                                                "C0": metabolite_data["C0"],
+                                                                "Ratio of AC-OHs to ACs": metabolite_data["Ratio of AC-OHs to ACs"],
+                                                                "СДК": metabolite_data["СДК"],
+                                                                "ССК": metabolite_data["ССК"],
+                                                                "СКК": metabolite_data["СКК"],
+                                                                "C0/(C16+C18)": metabolite_data["C0/(C16+C18)"],
+                                                                "CPT-2 Deficiency (NBS)": metabolite_data["CPT-2 Deficiency (NBS)"],
+                                                                "С2/С0": metabolite_data["С2/С0"],
+                                                                "Ratio of Short-Chain to Long-Chain ACs": metabolite_data[
+                                                                    "Ratio of Short-Chain to Long-Chain ACs"
+                                                                ],
+                                                                "Ratio of Medium-Chain to Long-Chain ACs": metabolite_data[
+                                                                    "Ratio of Medium-Chain to Long-Chain ACs"
+                                                                ],
+                                                                "Ratio of Short-Chain to Medium-Chain ACs": metabolite_data[
+                                                                    "Ratio of Short-Chain to Medium-Chain ACs"
+                                                                ],
+                                                                "Sum of ACs": metabolite_data["Sum of ACs"],
+                                                                "Sum of ACs + С0": metabolite_data["Sum of ACs + С0"],
+                                                                "Sum of ACs/C0": metabolite_data["Sum of ACs/C0"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Короткоцепочечные ацилкарнитины",
+                                                        metabolite_concentrations= {
+                                                                "C2": metabolite_data["C2"],
+                                                                "C3": metabolite_data["C3"],
+                                                                "C4": metabolite_data["C4"],
+                                                                "C5": metabolite_data["C5"],
+                                                                "C5-1": metabolite_data["C5-1"],
+                                                                "C5-DC": metabolite_data["C5-DC"],
+                                                                "C5-OH": metabolite_data["C5-OH"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Среднецепочечные ацилкарнитины",
+                                                        metabolite_concentrations= {
+                                                                "C6": metabolite_data["C6"],
+                                                                "C6-DC": metabolite_data["C6-DC"],
+                                                                "C8": metabolite_data["C8"],
+                                                                "C8-1": metabolite_data["C8-1"],
+                                                                "C10": metabolite_data["C10"],
+                                                                "C10-1": metabolite_data["C10-1"],
+                                                                "C10-2": metabolite_data["C10-2"],
+                                                                "C12": metabolite_data["C12"],
+                                                                "C12-1": metabolite_data["C12-1"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Длинноцепочечные ацилкарнитины",
+                                                        metabolite_concentrations= {
+                                                                "C14": metabolite_data["C14"],
+                                                                "C14-1": metabolite_data["C14-1"],
+                                                                "C14-2": metabolite_data["C14-2"],
+                                                                "C14-OH": metabolite_data["C14-OH"],
+                                                                "C16": metabolite_data["C16"],
+                                                                "C16-1": metabolite_data["C16-1"],
+                                                                "C16-1-OH": metabolite_data["C16-1-OH"],
+                                                                "C16-OH": metabolite_data["C16-OH"],
+                                                                "C18": metabolite_data["C18"],
+                                                                "C18-1": metabolite_data["C18-1"],
+                                                                "C18-1-OH": metabolite_data["C18-1-OH"],
+                                                                "C18-2": metabolite_data["C18-2"],
+                                                                "C18-OH": metabolite_data["C18-OH"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                st.image(plot_metabolite_z_scores(
+                                                            group_title= "Другие метаболиты",
+                                                        metabolite_concentrations= {
+                                                                "Pantothenic": metabolite_data["Pantothenic"],
+                                                                "Riboflavin": metabolite_data["Riboflavin"],
+                                                                "Melatonin": metabolite_data["Melatonin"],
+                                                                "Uridine": metabolite_data["Uridine"],
+                                                                "Adenosin": metabolite_data["Adenosin"],
+                                                                "Cytidine": metabolite_data["Cytidine"],
+                                                                "Cortisol": metabolite_data["Cortisol"],
+                                                                "Histamine": metabolite_data["Histamine"],
+                                                            },
+                                                            ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                                    
                                         with col3:
+                                            st.markdown("**Cтарый метод:**")
+                                            st.dataframe(patient_risk_scores_old.sort_values(by="Метод оценки", ascending=True), hide_index=True,column_order=('Риск-скор', 'Группа риска', 'Метод оценки'))
+                                            with st.expander("Показатели по группам:", expanded=True):
+                                                display_group_cards(patient_risk_params_exp_old, patient_risk_scores_old)
+                                        
+                                        with col4:
                                             # Display individual risk scores
                                             st.markdown("**Z-scores:**")
-                                            display_group_cards(patient_risk_params_exp, patient_risk_scores)
+                                            st.dataframe(patient_risk_scores.sort_values(by="Метод оценки", ascending=True), hide_index=True,column_order=('Риск-скор', 'Группа риска', 'Метод оценки'))
+                                            with st.expander("Показатели по группам:", expanded=True):
+                                                display_group_cards(patient_risk_params_exp, patient_risk_scores)
                                         
                                         
 
@@ -280,14 +492,224 @@ def main():
                             metrics_path = os.path.join(temp_dir, "metrics.xlsx")
                             st.session_state.edited_ref['metrics_ml_models'].to_excel(metrics_path, index=False)
                             st.info("✅ Предварительный просмотр рассчитанных значений!")
-                            cols = st.columns(2)
+                            cols = st.columns(3)
                             with cols[0]:
-                                st.header("Старые риски:")
-                                display_group_cards(risk_params_exp_old, risk_scores_old)
-                                
+                                with st.expander("Коридоры", expanded=True ):
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Метаболизм фенилаланина",
+                                               metabolite_concentrations= {
+                                                    "Phenylalanine": metabolite_data["Phenylalanine"],
+                                                    "Tyrosin": metabolite_data["Tyrosin"],
+                                                    "Summ Leu-Ile": metabolite_data["Summ Leu-Ile"],
+                                                    "Valine": metabolite_data["Valine"],
+                                                    "BCAA": metabolite_data["BCAA"],
+                                                    "BCAA/AAA": metabolite_data["BCAA/AAA"],
+                                                    "Phe/Tyr": metabolite_data["Phe/Tyr"],
+                                                    "Val/C4": metabolite_data["Val/C4"],
+                                                    "(Leu+IsL)/(C3+С5+С5-1+C5-DC)": metabolite_data[
+                                                        "(Leu+IsL)/(C3+С5+С5-1+C5-DC)"
+                                                    ],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Метаболизм гистидина",
+                                               metabolite_concentrations= {
+                                                    "Histidine": metabolite_data["Histidine"],
+                                                    "Methylhistidine": metabolite_data["Methylhistidine"],
+                                                    "Threonine": metabolite_data["Threonine"],
+                                                    "Glycine": metabolite_data["Glycine"],
+                                                    "DMG": metabolite_data["DMG"],
+                                                    "Serine": metabolite_data["Serine"],
+                                                    "Lysine": metabolite_data["Lysine"],
+                                                    "Glutamic acid": metabolite_data["Glutamic acid"],
+                                                    "Glutamine/Glutamate": metabolite_data["Glutamine"],
+                                                    "Glutamine/Glutamate": metabolite_data["Glutamine/Glutamate"],
+                                                    "Glycine/Serine": metabolite_data["Glycine/Serine"],
+                                                    "GSG Index": metabolite_data["GSG Index"],
+                                                    "Carnosine": metabolite_data["Carnosine"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Метаболизм метионина",
+                                               metabolite_concentrations= {
+                                                    "Methionine": metabolite_data["Methionine"],
+                                                    "Methionine-Sulfoxide": metabolite_data["Methionine-Sulfoxide"],
+                                                    "Taurine": metabolite_data["Taurine"],
+                                                    "Betaine": metabolite_data["Betaine"],
+                                                    "Choline": metabolite_data["Choline"],
+                                                    "TMAO": metabolite_data["TMAO"],
+                                                    "Betaine/choline": metabolite_data["Betaine/choline"],
+                                                    "Methionine + Taurine": metabolite_data["Methionine + Taurine"],
+                                                    "Met Oxidation": metabolite_data["Met Oxidation"],
+                                                    "TMAO Synthesis": metabolite_data["TMAO Synthesis"],
+                                                    "DMG / Choline": metabolite_data["DMG / Choline"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Кинурениновый путь",
+                                               metabolite_concentrations= {
+                                                    "Tryptophan": metabolite_data["Tryptophan"],
+                                                    "Kynurenine": metabolite_data["Kynurenine"],
+                                                    "Antranillic acid": metabolite_data["Antranillic acid"],
+                                                    "Quinolinic acid": metabolite_data["Quinolinic acid"],
+                                                    "Xanthurenic acid": metabolite_data["Xanthurenic acid"],
+                                                    "Kynurenic acid": metabolite_data["Kynurenic acid"],
+                                                    "Kyn/Trp": metabolite_data["Kyn/Trp"],
+                                                    "Trp/(Kyn+QA)": metabolite_data["Trp/(Kyn+QA)"],
+                                                    "Kyn/Quin": metabolite_data["Kyn/Quin"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Серотониновый путь",
+                                               metabolite_concentrations= {
+                                                    "Serotonin": metabolite_data["Serotonin"],
+                                                    "HIAA": metabolite_data["HIAA"],
+                                                    "5-hydroxytryptophan": metabolite_data["5-hydroxytryptophan"],
+                                                    "Serotonin / Trp": metabolite_data["Serotonin / Trp"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Индоловый путь",
+                                               metabolite_concentrations= {
+                                                    "Indole-3-acetic acid": metabolite_data["Indole-3-acetic acid"],
+                                                    "Indole-3-lactic acid": metabolite_data["Indole-3-lactic acid"],
+                                                    "Indole-3-carboxaldehyde": metabolite_data[
+                                                        "Indole-3-carboxaldehyde"
+                                                    ],
+                                                    "Indole-3-propionic acid": metabolite_data[
+                                                        "Indole-3-propionic acid"
+                                                    ],
+                                                    "Indole-3-butyric": metabolite_data["Indole-3-butyric"],
+                                                    "Tryptamine": metabolite_data["Tryptamine"],
+                                                    "Tryptamine / IAA": metabolite_data["Tryptamine / IAA"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Метаболизм аргинина",
+                                               metabolite_concentrations= {
+                                                    "Proline": metabolite_data["Proline"],
+                                                    "Hydroxyproline": metabolite_data["Hydroxyproline"],
+                                                    "ADMA": metabolite_data["ADMA"],
+                                                    "NMMA": metabolite_data["NMMA"],
+                                                    "TotalDMA (SDMA)": metabolite_data["TotalDMA (SDMA)"],
+                                                    "Homoarginine": metabolite_data["Homoarginine"],
+                                                    "Arginine": metabolite_data["Arginine"],
+                                                    "Citrulline": metabolite_data["Citrulline"],
+                                                    "Ornitine": metabolite_data["Ornitine"],
+                                                    "Asparagine": metabolite_data["Asparagine"],
+                                                    "Aspartic acid": metabolite_data["Aspartic acid"],
+                                                    "Creatinine": metabolite_data["Creatinine"],
+                                                    "Arg/ADMA": metabolite_data["Arg/ADMA"],
+                                                    "(Arg+HomoArg)/ADMA": metabolite_data["(Arg+HomoArg)/ADMA"],
+                                                    "Arg/Orn+Cit": metabolite_data["Arg/Orn+Cit"],
+                                                    "ADMA/(Adenosin+Arginine)": metabolite_data[
+                                                        "ADMA/(Adenosin+Arginine)"
+                                                    ],
+                                                    "Symmetrical Arg Methylation": metabolite_data[
+                                                        "Symmetrical Arg Methylation"
+                                                    ],
+                                                    "Sum of Dimethylated Arg": metabolite_data[
+                                                        "Sum of Dimethylated Arg"
+                                                    ],
+                                                    "Ratio of Pro to Cit": metabolite_data["Ratio of Pro to Cit"],
+                                                    "Cit Synthesis": metabolite_data["Cit Synthesis"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Метаболизм ацилкарнитинов (соотношения)",
+                                               metabolite_concentrations= {
+                                                    "Alanine": metabolite_data["Alanine"],
+                                                    "C0": metabolite_data["C0"],
+                                                    "Ratio of AC-OHs to ACs": metabolite_data["Ratio of AC-OHs to ACs"],
+                                                    "СДК": metabolite_data["СДК"],
+                                                    "ССК": metabolite_data["ССК"],
+                                                    "СКК": metabolite_data["СКК"],
+                                                    "C0/(C16+C18)": metabolite_data["C0/(C16+C18)"],
+                                                    "CPT-2 Deficiency (NBS)": metabolite_data["CPT-2 Deficiency (NBS)"],
+                                                    "С2/С0": metabolite_data["С2/С0"],
+                                                    "Ratio of Short-Chain to Long-Chain ACs": metabolite_data[
+                                                        "Ratio of Short-Chain to Long-Chain ACs"
+                                                    ],
+                                                    "Ratio of Medium-Chain to Long-Chain ACs": metabolite_data[
+                                                        "Ratio of Medium-Chain to Long-Chain ACs"
+                                                    ],
+                                                    "Ratio of Short-Chain to Medium-Chain ACs": metabolite_data[
+                                                        "Ratio of Short-Chain to Medium-Chain ACs"
+                                                    ],
+                                                    "Sum of ACs": metabolite_data["Sum of ACs"],
+                                                    "Sum of ACs + С0": metabolite_data["Sum of ACs + С0"],
+                                                    "Sum of ACs/C0": metabolite_data["Sum of ACs/C0"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Короткоцепочечные ацилкарнитины",
+                                               metabolite_concentrations= {
+                                                    "C2": metabolite_data["C2"],
+                                                    "C3": metabolite_data["C3"],
+                                                    "C4": metabolite_data["C4"],
+                                                    "C5": metabolite_data["C5"],
+                                                    "C5-1": metabolite_data["C5-1"],
+                                                    "C5-DC": metabolite_data["C5-DC"],
+                                                    "C5-OH": metabolite_data["C5-OH"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Среднецепочечные ацилкарнитины",
+                                               metabolite_concentrations= {
+                                                    "C6": metabolite_data["C6"],
+                                                    "C6-DC": metabolite_data["C6-DC"],
+                                                    "C8": metabolite_data["C8"],
+                                                    "C8-1": metabolite_data["C8-1"],
+                                                    "C10": metabolite_data["C10"],
+                                                    "C10-1": metabolite_data["C10-1"],
+                                                    "C10-2": metabolite_data["C10-2"],
+                                                    "C12": metabolite_data["C12"],
+                                                    "C12-1": metabolite_data["C12-1"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Длинноцепочечные ацилкарнитины",
+                                               metabolite_concentrations= {
+                                                    "C14": metabolite_data["C14"],
+                                                    "C14-1": metabolite_data["C14-1"],
+                                                    "C14-2": metabolite_data["C14-2"],
+                                                    "C14-OH": metabolite_data["C14-OH"],
+                                                    "C16": metabolite_data["C16"],
+                                                    "C16-1": metabolite_data["C16-1"],
+                                                    "C16-1-OH": metabolite_data["C16-1-OH"],
+                                                    "C16-OH": metabolite_data["C16-OH"],
+                                                    "C18": metabolite_data["C18"],
+                                                    "C18-1": metabolite_data["C18-1"],
+                                                    "C18-1-OH": metabolite_data["C18-1-OH"],
+                                                    "C18-2": metabolite_data["C18-2"],
+                                                    "C18-OH": metabolite_data["C18-OH"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
+                                    st.image(plot_metabolite_z_scores(
+                                                group_title= "Другие метаболиты",
+                                               metabolite_concentrations= {
+                                                    "Pantothenic": metabolite_data["Pantothenic"],
+                                                    "Riboflavin": metabolite_data["Riboflavin"],
+                                                    "Melatonin": metabolite_data["Melatonin"],
+                                                    "Uridine": metabolite_data["Uridine"],
+                                                    "Adenosin": metabolite_data["Adenosin"],
+                                                    "Cytidine": metabolite_data["Cytidine"],
+                                                    "Cortisol": metabolite_data["Cortisol"],
+                                                    "Histamine": metabolite_data["Histamine"],
+                                                },
+                                                ref_stats=create_ref_stats_from_excel(ref_stats_path)))
                             with cols[1]:
+                                st.header("Старые риски:")
+                                st.dataframe(risk_scores_old.sort_values(by="Метод оценки", ascending=True), hide_index=True,column_order=('Риск-скор', 'Группа риска', 'Метод оценки'))
+                                with st.expander("Показатели по группам:", expanded=True):
+                                    display_group_cards(risk_params_exp_old, risk_scores_old)
+                                
+                                
+                            with cols[2]:
                                 st.header("Z-score:")
-                                display_group_cards(risk_params_exp_zscore, risk_scores)
+                                st.dataframe(risk_scores.sort_values(by="Метод оценки", ascending=True), hide_index=True,column_order=('Риск-скор', 'Группа риска', 'Метод оценки'))
+                                with st.expander("Показатели по группам:", expanded=True):
+                                    display_group_cards(risk_params_exp_zscore, risk_scores)
                                 
                     except Exception as e:
                         st.error(f"An error occurred: {str(e)}")
