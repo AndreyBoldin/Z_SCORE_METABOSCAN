@@ -408,9 +408,9 @@ def prepare_final_dataframe_zscore(risk_params_data, metabolomic_data_with_ratio
 def probability_to_score(prob, threshold):
     prob = min(max(prob, 0), 1)
     if prob < threshold:
-        score = 4 * prob / threshold
+        score = 5 * prob / threshold
     else:
-        score = 4 + 4 * (prob - threshold) / (1 - threshold)
+        score = 5 + 5 * (prob - threshold) / (1 - threshold)
     return 10- round(score, 0)
 
 from importlib import import_module
